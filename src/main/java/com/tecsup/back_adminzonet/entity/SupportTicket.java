@@ -1,12 +1,12 @@
 package com.tecsup.back_adminzonet.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "support_tickets")
-@Data
+@Data // Esto genera automáticamente el setResolvedAt
 public class SupportTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +18,12 @@ public class SupportTicket {
 
     private String subject;
     private String description;
-    private String status; // OPEN, RESOLVED
+    private String status;
     private String priority;
     private String adminResponse;
+
+    // ESTA LÍNEA ES LA QUE TE FALTA:
+    private LocalDateTime resolvedAt;
+
     private LocalDateTime createdAt;
 }

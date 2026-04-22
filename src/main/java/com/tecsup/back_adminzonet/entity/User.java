@@ -16,5 +16,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // ... resto del código
+
+    private String name;
+    private String email;
+    private String plan;
+    private boolean active; // Este es el que falta para el error de 'setActive'
 }
