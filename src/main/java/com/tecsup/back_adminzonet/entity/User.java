@@ -1,11 +1,9 @@
 package com.tecsup.back_adminzonet.entity;
 
-// IMPORTANTE: Usa jakarta, no javax
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -19,6 +17,11 @@ public class User {
 
     private String name;
     private String email;
+
+    // 🆕 Campos necesarios para la seguridad
+    private String password;
+    private String role;
+
     private String plan;
-    private boolean active; // Este es el que falta para el error de 'setActive'
+    private boolean active;
 }

@@ -3,8 +3,12 @@ package com.tecsup.back_adminzonet.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -12,28 +16,31 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
+@EnableWebSecurity // Habilita la seguridad web de Spring
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Habilitar CORS para que tu Front-end en React pueda conectarse
+                // 1. Configuración de CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // 2. Desactivar CSRF para permitir peticiones desde Postman
+                // 2. Desactivar CSRF (necesario para APIs Stateless)
                 .csrf(csrf -> csrf.disable())
 
-                // 3. Configuración de autorización
+                // 3. Política de sesiones sin estado (Stateless)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 4. Configuración de autorización de rutas
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 PERMITIR ACCESO TOTAL A LAS RUTAS DE ADMIN PARA PRUEBAS (Temporal)
-                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()      // Endpoints de login públicos
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo accesibles con rol ADMIN
+                        .anyRequest().authenticated()                      // El resto requiere autenticación
+                )
 
-                        // Permitir rutas de autenticación y recursos estáticos (como fotos de mascotas)
-                        .requestMatchers("/api/auth/**", "/uploads/**").permitAll()
-
-                        // El resto de peticiones requieren autenticación
-                        .anyRequest().authenticated()
-                );
+                // 5. 🆕 REGISTRO DEL FILTRO JWT:
+                // Se ejecuta antes del filtro de usuario/contraseña estándar de Spring
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -42,9 +49,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*")); // Permitir cualquier origen en desarrollo
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -52,8 +58,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        // Necesario para que el sistema reconozca las contraseñas encriptadas de Railway
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
