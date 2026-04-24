@@ -7,13 +7,29 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdminDashboardService {
-    @Autowired private AdminStatsRepository statsRepo;
 
+    @Autowired
+    private AdminStatsRepository statsRepo;
+
+    /**
+     * Obtiene las estadísticas completas para el Dashboard del Administrador.
+     * Se sincroniza con los contadores definidos en AdminStatsRepository.
+     */
     public DashboardDTO getStats() {
         DashboardDTO dto = new DashboardDTO();
+
+        // 1. Usuarios totales registrados en el sistema
         dto.setTotalUsers(statsRepo.countTotalUsers());
+
+        // 2. Mascotas totales (incluyendo todos los estados)
         dto.setTotalPets(statsRepo.countTotalPets());
-        // Aquí puedes agregar más lógica de conteo
+
+        // 3. Usuarios con plan PREMIUM y cuenta activa [CORRECCIÓN]
+        dto.setActivePremium(statsRepo.countActivePremiumUsers());
+
+        // 4. Tickets de soporte que aún no han sido resueltos [CORRECCIÓN]
+        dto.setPendingTickets(statsRepo.countPendingTickets());
+
         return dto;
     }
 }
