@@ -15,8 +15,4 @@ public class Pet {
     private String species;
     private String status; // Ej: "CONNECTED", "LOST"
 
-    // Nuevos campos para monitoreo IoT
-    private String deviceStatus; // "ONLINE", "OFFLINE"
-    private int batteryLevel;    // 0 a 100
-    private String nextVaccinationDate; // Para el control de salud
 }
