@@ -1,27 +1,26 @@
 package com.tecsup.back_adminzonet.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "support_tickets")
+@Table(name = "notifications")
 @Data
-public class SupportTicket {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String subject;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    private String status; // OPEN, IN_PROGRESS, CLOSED
+    private String message;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id") // El ID del usuario que recibirá el aviso
     private Long userId;
 }
