@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -17,11 +18,13 @@ public class User {
 
     private String name;
     private String email;
-
-    // 🆕 Campos necesarios para la seguridad
     private String password;
     private String role;
-
     private String plan;
     private boolean active;
+
+    // ✅ RELACIÓN LÓGICA (No crea columna en la DB)
+    // mappedBy indica que el dueño de la relación es el campo "user" en la entidad Pet
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Pet> pets;
 }

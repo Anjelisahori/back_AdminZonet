@@ -19,7 +19,11 @@ public interface AdminStatsRepository extends JpaRepository<User, Long> {
     @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'PENDING'")
     long countPendingTickets();
 
-    // HU-DASH: Obtener el conteo agrupado por el campo 'status' de la tabla 'pets'
+    /**
+     * Obtiene el conteo agrupado por el campo 'status' de la entidad Pet.
+     * Esta consulta es la que causaba el error de compilación.
+     * Al usar p.status, Hibernate buscará el atributo 'status' en la clase Pet.
+     */
     @Query("SELECT p.status, COUNT(p) FROM Pet p GROUP BY p.status")
     List<Object[]> countPetsByStatus();
 }
