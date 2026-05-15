@@ -10,19 +10,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/payments")
-@CrossOrigin(origins = "*") // Para conexión con React
+@CrossOrigin(origins = "*") //
 public class AdminPaymentController {
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository; //
 
     /**
-     * 🟢 Jala el historial real de transacciones de la tabla 'payments' en Railway.
-     * GET http://localhost:8081/api/admin/payments/history
+     * 🟢 Endpoint corregido para coincidir con el Frontend.
+     * Jala los datos reales de la tabla 'payments' en Railway.
      */
-    @GetMapping("/history")
-    public ResponseEntity<List<Payment>> getTransactionHistory() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Payment>> getAllPayments() {
+        // Busca todos los registros de la tabla 'payments'
         List<Payment> payments = paymentRepository.findAll();
+
+        // Retorna la lista de pagos vinculados a los campos reales de tu DB
         return ResponseEntity.ok(payments);
     }
 }
